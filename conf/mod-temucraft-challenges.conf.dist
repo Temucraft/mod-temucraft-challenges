@@ -1,0 +1,62 @@
+[worldserver]
+
+########################################
+# mod-temucraft-challenges
+########################################
+#
+#    Temucraft.Challenges.Enable
+#        Description: Let players take challenges (.challenge) and apply their rules.
+#        Default:     1
+
+Temucraft.Challenges.Enable = 1
+
+#
+#    Temucraft.Challenges.JoinLevel
+#        Description: Highest level a challenge can be taken at. At level 1 the character must not have any
+#                     experience yet.
+#        Default:     1
+
+Temucraft.Challenges.JoinLevel = 1
+
+#
+#    Temucraft.Challenges.Hardcore.LogoutAfterDeath
+#        Description: Seconds after a hardcore death before the character is logged out (0 = never).
+#        Default:     120
+
+Temucraft.Challenges.Hardcore.LogoutAfterDeath = 120
+
+#
+#    Temucraft.Challenges.Hardcore.GroupLevelRange
+#        Description: Hardcore characters only group with hardcore characters within this many levels.
+#        Default:     5
+
+Temucraft.Challenges.Hardcore.GroupLevelRange = 5
+
+#
+#    Temucraft.Challenges.Hardcore.NoTeleports
+#        Description: Hardcore characters carry a Tarnished Soul: no hearthstones, teleports, portals or summons
+#                     (game masters may still summon them).
+#        Default:     1
+
+Temucraft.Challenges.Hardcore.NoTeleports = 1
+
+#
+#    Temucraft.Challenges.SlowAndSteady.KillRate
+#        Description: Experience multiplier for kills outside dungeons.
+#        Default:     0.5
+
+Temucraft.Challenges.SlowAndSteady.KillRate = 0.5
+
+#
+#    Temucraft.Challenges.SlowAndSteady.DeathLoss
+#        Description: Share of the current level's experience lost when a creature kills you.
+#        Default:     0.05
+
+Temucraft.Challenges.SlowAndSteady.DeathLoss = 0.05
+
+#
+#    Temucraft.Challenges.WarMode.Rate
+#        Description: Experience multiplier for War Mode (all sources).
+#        Default:     1.2
+
+Temucraft.Challenges.WarMode.Rate = 1.2
