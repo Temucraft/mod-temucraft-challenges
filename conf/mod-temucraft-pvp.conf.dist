@@ -1,0 +1,95 @@
+[worldserver]
+
+########################################
+# mod-temucraft-pvp
+########################################
+#
+#    Temucraft.PvP.Enable
+#        Description: PvP experience and close-game marks.
+#        Default:     1
+
+Temucraft.PvP.Enable = 1
+
+#
+#    Temucraft.PvP.KillXP
+#        Description: % of the experience your level needs, for each honorable kill (a player who isn't grey to you).
+#                     The same player again within SameVictimSeconds gives nothing. 0 = off.
+#        Default:     1, 300
+
+Temucraft.PvP.KillXP = 1
+Temucraft.PvP.KillXP.SameVictimSeconds = 300
+
+#
+#    Temucraft.PvP.BattlegroundXP.Win / Loss
+#        Description: % of the experience your level needs, at the end of a battleground (not arenas).
+#        Default:     10, 5
+
+Temucraft.PvP.BattlegroundXP.Win = 10
+Temucraft.PvP.BattlegroundXP.Loss = 5
+
+#
+#    Temucraft.PvP.CloseGame.Marks
+#        Description: Extra marks of that battleground for everyone in a close game (0 = off).
+#                     Warsong Gulch, Arathi Basin, Eye of the Storm: the losers' score is at least Percent % of the
+#                     winners'. Alterac Valley: the winners had at most AlteracReinforcements left.
+#        Default:     1, 60, 150
+
+Temucraft.PvP.CloseGame.Marks = 1
+Temucraft.PvP.CloseGame.Percent = 60
+Temucraft.PvP.CloseGame.AlteracReinforcements = 150
+
+#
+#    Temucraft.PvP.Token.Enable
+#        Description: Marks of Valor: a PvP currency spent with the Valor Quartermaster on PvP consumables and cosmetic looks.
+#        Default:     1
+
+Temucraft.PvP.Token.Enable = 1
+
+#
+#    Temucraft.PvP.Token.Item
+#        Description: The Mark of Valor item. Must match data/sql.
+#        Default:     609200
+
+Temucraft.PvP.Token.Item = 609200
+
+#
+#    Temucraft.PvP.Token.HonorableKill
+#        Description: Marks for each honorable kill (every player who gets honor for it).
+#        Default:     1
+
+Temucraft.PvP.Token.HonorableKill = 1
+
+#
+#    Temucraft.PvP.Token.BattlegroundWin
+#        Description: Marks for each player on the winning side of a battleground.
+#        Default:     10
+
+Temucraft.PvP.Token.BattlegroundWin = 10
+
+#
+#    Temucraft.PvP.Token.BattlegroundLoss
+#        Description: Marks for each player on the losing side of a battleground.
+#        Default:     3
+
+Temucraft.PvP.Token.BattlegroundLoss = 3
+
+#
+#    Temucraft.PvP.Token.ArenaWin
+#        Description: Marks for each player on the winning arena team.
+#        Default:     8
+
+Temucraft.PvP.Token.ArenaWin = 8
+
+#
+#    Temucraft.PvP.Token.ArenaLoss
+#        Description: Marks for each player on the losing arena team.
+#        Default:     0
+
+Temucraft.PvP.Token.ArenaLoss = 0
+
+#
+#    Temucraft.PvP.Token.ArenaRatedOnly
+#        Description: 1 = only rated arena matches give marks.
+#        Default:     0
+
+Temucraft.PvP.Token.ArenaRatedOnly = 0
