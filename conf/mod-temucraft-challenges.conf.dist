@@ -5,7 +5,7 @@
 ########################################
 #
 #    Temucraft.Challenges.Enable
-#        Description: Let players take challenges (.challenge) and apply their rules.
+#        Description: Let players take challenges (.temucraft challenge) and apply their rules.
 #        Default:     1
 
 Temucraft.Challenges.Enable = 1
@@ -70,7 +70,7 @@ Temucraft.Challenges.AuraFirst = 95410
 
 #
 #    Temucraft.Challenges.SelfFound.Enable
-#        Description: Offer the Self-Found challenge (.challenge join selffound). Characters who already have it keep it.
+#        Description: Offer the Self-Found challenge (.temucraft challenge join selffound). Characters who already have it keep it.
 #        Default:     1
 
 Temucraft.Challenges.SelfFound.Enable = 1

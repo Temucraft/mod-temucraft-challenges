@@ -16,9 +16,9 @@
  *   Hardcore also carries a Tarnished Soul (Temucraft.Challenges.Hardcore.NoTeleports): no hearthstones, teleports,
  *   portals or summons.
  *
- *   .challenge                  lists the challenges and which you have
- *   .challenge join <name>      takes one on (level 1, no experience yet; all can be combined)
- *   .challenge revive <player>  (GM) brings a fallen hardcore character back
+ *   .temucraft challenge                  lists the challenges and which you have
+ *   .temucraft challenge join <name>      takes one on (level 1, no experience yet; all can be combined)
+ *   .temucraft challenge revive <player>  (GM) brings a fallen hardcore character back
  *
  * Creatures with the ScriptName npc_temucraft_challenge_keeper offer the challenges in gossip.
  *
@@ -543,11 +543,11 @@ public:
     {
         static ChatCommandTable sub =
         {
-            { "",       HandleList,   SEC_PLAYER,     Console::No },
-            { "join",   HandleJoin,   SEC_PLAYER,     Console::No },
+            { "",       HandleList,   100150,     Console::No },
+            { "join",   HandleJoin,   100151,     Console::No },
             { "revive", HandleRevive, 100101 /* SEC_GAMEMASTER -> RBAC */, Console::Yes },
         };
-        static ChatCommandTable root = { { "challenge", sub } };
+        static ChatCommandTable root = { { "temucraft challenge", sub } };
         return root;
     }
 
@@ -555,7 +555,7 @@ public:
     {
         Player* p = handler->GetSession()->GetPlayer();
         uint32 mask = MaskOf(p->GetGUID());
-        handler->SendSysMessage(TemucraftModuleText("mod-temucraft-challenges", handler, 8, "Challenges (take them at level 1 with .challenge join <name>; they can't be dropped):"));
+        handler->SendSysMessage(TemucraftModuleText("mod-temucraft-challenges", handler, 8, "Challenges (take them at level 1 with .temucraft challenge join <name>; they can't be dropped):"));
         for (uint8 c = 0; c < CH_COUNT; ++c)
             if (Offered(c) || Has(mask, Challenge(c)))
                 handler->PSendSysMessage("{} {} ({}): {}", Has(mask, Challenge(c)) ? "|cff20ff20[x]|r" : "[ ]", CHALLENGES[c].name, CHALLENGES[c].key, CHALLENGES[c].text);
@@ -573,7 +573,7 @@ public:
                 c = i;
         if (c < 0)
         {
-            handler->SendSysMessage(TemucraftModuleText("mod-temucraft-challenges", handler, 9, "Unknown challenge. See .challenge for the names."));
+            handler->SendSysMessage(TemucraftModuleText("mod-temucraft-challenges", handler, 9, "Unknown challenge. See .temucraft challenge for the names."));
             return false;
         }
         if (p->GetLevel() > settings.joinLevel || (p->GetLevel() == settings.joinLevel && p->GetUInt32Value(PLAYER_XP) && settings.joinLevel == 1))

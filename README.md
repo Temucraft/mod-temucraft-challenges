@@ -1,9 +1,9 @@
 # mod-temucraft-challenges
 
-Optional ways to level a character. Taken at level 1 with `.challenge join <name>`, kept for good, and any can be
+Optional ways to level a character. Taken at level 1 with `.temucraft challenge join <name>`, kept for good, and any can be
 combined. Each shows as an aura on the character.
 
-| Challenge | `.challenge join` | Rules |
+| Challenge | `.temucraft challenge join` | Rules |
 |---|---|---|
 | Slow & Steady | `slow` | Half experience from kills outside dungeons. Dying to a creature (outside battlegrounds) costs 5% of the experience gathered in the current level. |
 | Exhaustion | `exhaustion` | No rested experience. |
@@ -17,7 +17,7 @@ combined. Each shows as an aura on the character.
 Hardcore characters also carry a Tarnished Soul: no hearthstones, teleports, portals or summons
 (`Temucraft.Challenges.Hardcore.NoTeleports`).
 
-Commands: `.challenge` lists them and which you have; `.challenge join <name>`; `.challenge revive <player>` (GM)
+Commands: `.temucraft challenge` lists them and which you have; `.temucraft challenge join <name>`; `.temucraft challenge revive <player>` (GM)
 brings a fallen hardcore character back.
 
 Any creature with the ScriptName `npc_temucraft_challenge_keeper` offers the challenges in gossip.
