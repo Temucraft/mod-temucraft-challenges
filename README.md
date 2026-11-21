@@ -42,7 +42,7 @@ The rules follow a 1.12 server's challenges; the code is new and written for Aze
 
 | Database | Table | IDs |
 |---|---|---|
-| world | `spell_dbc` | 95410-95417 (challenge auras; also in the client Spell.dbc; 95417 Self-Found is new and still has to be added to the client Spell.dbc) |
+| world | `spell_dbc` | 95410-95417 (challenge auras; also in the client Spell.dbc; 95417 is Self-Found) |
 | world | `mod_temucraft_challenges_reward` | |
 | characters | `mod_temucraft_challenges` | one row per character with a challenge |
 
