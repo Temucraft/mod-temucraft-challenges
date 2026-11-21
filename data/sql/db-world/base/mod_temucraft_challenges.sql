@@ -1,5 +1,5 @@
 -- mod-temucraft-challenges: rewards mailed when a character with a challenge reaches a level.
--- Challenge: 0 Slow & Steady, 1 Exhaustion, 2 War Mode, 3 Hardcore, 4 Vagrant's Endeavor, 5 Boaring Adventure.
+-- Challenge: 0 Slow & Steady, 1 Exhaustion, 2 War Mode, 3 Hardcore, 4 Vagrant's Endeavor, 5 Boaring Adventure, 6 Explorer's Contract, 7 Self-Found.
 -- TitleID is a CharTitles.dbc ID (0 = none), granted directly. Hardcore rewards are skipped once the character has died.
 CREATE TABLE IF NOT EXISTS `mod_temucraft_challenges_reward` (
   `Challenge` tinyint unsigned NOT NULL,

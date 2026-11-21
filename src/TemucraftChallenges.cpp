@@ -11,6 +11,8 @@
  *   Vagrant's Endeavor  only poor and common equipment, and no enchantments, until the maximum level.
  *   Boaring Adventure   experience only from killing boars.
  *   Explorer's Contract on foot: no flight paths, hearthstones, teleports, portals or summons until the maximum level.
+ *   Self-Found          everything comes from your own play: no trading with other players, no mail to or from other
+ *                       players, and no auction house (Temucraft.Challenges.SelfFound.*).
  *   Hardcore also carries a Tarnished Soul (Temucraft.Challenges.Hardcore.NoTeleports): no hearthstones, teleports,
  *   portals or summons.
  *
@@ -21,7 +23,7 @@
  * Creatures with the ScriptName npc_temucraft_challenge_keeper offer the challenges in gossip.
  *
  * Rewards per challenge and level (mailed) are in mod_temucraft_challenges_reward (world DB). Each challenge has a
- * passive aura so players can see it (spells 95410-95415, in spell_dbc and the client patch).
+ * passive aura so players can see it (spells 95410-95417 from Temucraft.Challenges.AuraFirst, in spell_dbc and the client patch).
  * Written for AzerothCore; the challenges follow a 1.12 server's, the code is new.
  */
 
@@ -38,6 +40,7 @@
 #include "ScriptedGossip.h"
 #include "CreatureScript.h"
 #include "ScriptMgr.h"
+#include "MiscScript.h"
 #include "Spell.h"
 #include "SpellInfo.h"
 #include "SpellMgr.h"
@@ -59,19 +62,21 @@ namespace
         CH_VAGRANT,
         CH_BOARING,
         CH_EXPLORER,
+        CH_SELF_FOUND,
         CH_COUNT
     };
 
-    struct ChallengeInfo { char const* key; char const* name; uint32 aura; char const* text; };
+    struct ChallengeInfo { char const* key; char const* name; char const* text; }; // aura: Temucraft.Challenges.AuraFirst + the challenge number
     std::array<ChallengeInfo, CH_COUNT> const CHALLENGES =
     { {
-        { "slow",       "Slow & Steady",       95410, "Half experience from kills outside dungeons; dying to a creature costs 5% of this level's experience." },
-        { "exhaustion", "Exhaustion",          95411, "No rested experience." },
-        { "war",        "War Mode",            95412, "Always flagged for PvP; 20% more experience from every source." },
-        { "hardcore",   "Hardcore",            95413, "One life. Hardcore characters only play with each other." },
-        { "vagrant",    "Vagrant's Endeavor",  95414, "Only poor and common equipment, and no enchantments, until the maximum level." },
-        { "boaring",    "Boaring Adventure",   95415, "Experience only from killing boars." },
-        { "explorer",   "Explorer's Contract", 95416, "On foot: no flight paths, hearthstones, teleports, portals or summons until the maximum level." },
+        { "slow",       "Slow & Steady",       "Half experience from kills outside dungeons; dying to a creature costs 5% of this level's experience." },
+        { "exhaustion", "Exhaustion",          "No rested experience." },
+        { "war",        "War Mode",            "Always flagged for PvP; 20% more experience from every source." },
+        { "hardcore",   "Hardcore",            "One life. Hardcore characters only play with each other." },
+        { "vagrant",    "Vagrant's Endeavor",  "Only poor and common equipment, and no enchantments, until the maximum level." },
+        { "boaring",    "Boaring Adventure",   "Experience only from killing boars." },
+        { "explorer",   "Explorer's Contract", "On foot: no flight paths, hearthstones, teleports, portals or summons until the maximum level." },
+        { "selffound",  "Self-Found",          "Everything from your own play: no trading, no mail to or from other players, no auction house." },
     } };
 
     struct Settings
@@ -84,7 +89,17 @@ namespace
         float slowDeathLoss = 0.05f;
         float warRate = 1.2f;
         bool hardcoreNoTeleports = true;
+        uint32 auraFirst = 95410;
+        bool selfFound = true;
+        bool selfFoundNoTrade = true;
+        bool selfFoundNoMail = true;
+        bool selfFoundNoAuction = true;
     } settings;
+
+    uint32 AuraOf(uint8 c) { return settings.auraFirst + c; }
+
+    // a challenge turned off in the config is not offered (characters who already have it keep it)
+    bool Offered(uint8 c) { return c != CH_SELF_FOUND || settings.selfFound; }
 
     struct State { uint32 mask = 0; bool dead = false; uint32 kickTimer = 0; uint32 restTimer = 0; };
     std::unordered_map<uint32, State> sStates;   // by character low guid, for those online with a challenge
@@ -116,8 +131,8 @@ namespace
     void ApplyAuras(Player* p, uint32 mask)
     {
         for (uint8 c = 0; c < CH_COUNT; ++c)
-            if (Has(mask, Challenge(c)) && !p->HasAura(CHALLENGES[c].aura) && sSpellMgr->GetSpellInfo(CHALLENGES[c].aura))
-                p->AddAura(CHALLENGES[c].aura, p);
+            if (Has(mask, Challenge(c)) && !p->HasAura(AuraOf(c)) && sSpellMgr->GetSpellInfo(AuraOf(c)))
+                p->AddAura(AuraOf(c), p);
     }
 
     bool MaxLevel(Player* p) { return p->GetLevel() >= sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL); }
@@ -200,6 +215,13 @@ namespace
     }
 
     void Announce(Player* p, std::string const& text) { ChatHandler(p->GetSession()).SendSysMessage(text); }
+
+    bool IsSelfFound(ObjectGuid guid) { return Has(MaskOf(guid), CH_SELF_FOUND); }
+
+    void TellSelfFound(Player* p, uint32 id, char const* text)
+    {
+        ChatHandler(p->GetSession()).SendNotification(TemucraftModuleText("mod-temucraft-challenges", p->GetSession(), id, text));
+    }
 }
 
 class TemucraftChallenges_Player : public PlayerScript
@@ -382,12 +404,26 @@ public:
 
     bool OnPlayerCanInitTrade(Player* p, Player* target) override
     {
-        return !settings.enable || !target || IsHardcore(p->GetGUID()) == IsHardcore(target->GetGUID());
+        if (!settings.enable || !target)
+            return true;
+        if (settings.selfFoundNoTrade && (IsSelfFound(p->GetGUID()) || IsSelfFound(target->GetGUID())))
+        {
+            TellSelfFound(p, 19, "Self-Found characters don't trade with other players.");
+            return false;
+        }
+        return IsHardcore(p->GetGUID()) == IsHardcore(target->GetGUID());
     }
 
     bool OnPlayerCanSendMail(Player* p, ObjectGuid receiver, ObjectGuid /*mailbox*/, std::string& /*subject*/, std::string& /*body*/, uint32 money, uint32 cod, Item* item) override
     {
-        if (!settings.enable || (!money && !cod && !item))
+        if (!settings.enable)
+            return true;
+        if (settings.selfFoundNoMail && receiver != p->GetGUID() && (IsSelfFound(p->GetGUID()) || IsSelfFound(receiver)))
+        {
+            TellSelfFound(p, 20, "Self-Found characters don't send or receive mail from other players.");
+            return false;
+        }
+        if (!money && !cod && !item)
             return true;
         if (IsHardcore(p->GetGUID()) != IsHardcore(receiver))
         {
@@ -402,6 +438,11 @@ public:
         if (settings.enable && PlayerHas(p, CH_HARDCORE))
         {
             ChatHandler(p->GetSession()).SendNotification(TemucraftModuleText("mod-temucraft-challenges", p->GetSession(), 5, "Hardcore characters can't use the auction house."));
+            return false;
+        }
+        if (settings.enable && settings.selfFoundNoAuction && PlayerHas(p, CH_SELF_FOUND))
+        {
+            TellSelfFound(p, 21, "Self-Found characters can't use the auction house.");
             return false;
         }
         return true;
@@ -422,6 +463,22 @@ private:
             return false;
         }
         return true;
+    }
+};
+
+// Self-Found: the auction house doesn't open (no buying, no selling)
+class TemucraftChallenges_Auction : public MiscScript
+{
+public:
+    TemucraftChallenges_Auction() : MiscScript("TemucraftChallenges_Auction", { MISCHOOK_CAN_SEND_AUCTIONHELLO }) { }
+
+    bool CanSendAuctionHello(WorldSession const* session, ObjectGuid /*guid*/, Creature* /*creature*/) override
+    {
+        Player* p = session ? session->GetPlayer() : nullptr;
+        if (!p || !settings.enable || !settings.selfFoundNoAuction || !PlayerHas(p, CH_SELF_FOUND))
+            return true;
+        TellSelfFound(p, 21, "Self-Found characters can't use the auction house.");
+        return false;
     }
 };
 
@@ -500,7 +557,8 @@ public:
         uint32 mask = MaskOf(p->GetGUID());
         handler->SendSysMessage(TemucraftModuleText("mod-temucraft-challenges", handler, 8, "Challenges (take them at level 1 with .challenge join <name>; they can't be dropped):"));
         for (uint8 c = 0; c < CH_COUNT; ++c)
-            handler->PSendSysMessage("{} {} ({}): {}", Has(mask, Challenge(c)) ? "|cff20ff20[x]|r" : "[ ]", CHALLENGES[c].name, CHALLENGES[c].key, CHALLENGES[c].text);
+            if (Offered(c) || Has(mask, Challenge(c)))
+                handler->PSendSysMessage("{} {} ({}): {}", Has(mask, Challenge(c)) ? "|cff20ff20[x]|r" : "[ ]", CHALLENGES[c].name, CHALLENGES[c].key, CHALLENGES[c].text);
         return true;
     }
 
@@ -511,7 +569,7 @@ public:
             return false;
         int c = -1;
         for (uint8 i = 0; i < CH_COUNT; ++i)
-            if (StringEqualI(name, CHALLENGES[i].key))
+            if (StringEqualI(name, CHALLENGES[i].key) && Offered(i))
                 c = i;
         if (c < 0)
         {
@@ -575,7 +633,7 @@ public:
         bool canJoin = settings.enable && (player->GetLevel() < settings.joinLevel || (player->GetLevel() == settings.joinLevel && !(settings.joinLevel == 1 && player->GetUInt32Value(PLAYER_XP))));
         for (uint8 c = 0; c < CH_COUNT; ++c)
         {
-            if (Has(mask, Challenge(c)))
+            if (Has(mask, Challenge(c)) || !Offered(c))
                 continue;
             if (canJoin)
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, Acore::StringFormat(TemucraftModuleText("mod-temucraft-challenges", player, 14, "Take the {} challenge."), CHALLENGES[c].name), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + c,
@@ -615,6 +673,11 @@ public:
         settings.slowDeathLoss = sConfigMgr->GetOption<float>("Temucraft.Challenges.SlowAndSteady.DeathLoss", 0.05f);
         settings.warRate = sConfigMgr->GetOption<float>("Temucraft.Challenges.WarMode.Rate", 1.2f);
         settings.hardcoreNoTeleports = sConfigMgr->GetOption<bool>("Temucraft.Challenges.Hardcore.NoTeleports", true);
+        settings.auraFirst = sConfigMgr->GetOption<uint32>("Temucraft.Challenges.AuraFirst", 95410);
+        settings.selfFound = sConfigMgr->GetOption<bool>("Temucraft.Challenges.SelfFound.Enable", true);
+        settings.selfFoundNoTrade = sConfigMgr->GetOption<bool>("Temucraft.Challenges.SelfFound.NoTrade", true);
+        settings.selfFoundNoMail = sConfigMgr->GetOption<bool>("Temucraft.Challenges.SelfFound.NoMail", true);
+        settings.selfFoundNoAuction = sConfigMgr->GetOption<bool>("Temucraft.Challenges.SelfFound.NoAuction", true);
     }
 
     void OnStartup() override { LoadRewards(); }
@@ -625,6 +688,7 @@ void AddTemucraftChallengesScripts()
     new TemucraftChallenges_Player();
     new TemucraftChallenges_Commands();
     new TemucraftChallenges_Travel();
+    new TemucraftChallenges_Auction();
     new TemucraftChallenges_Summons();
     new TemucraftChallenges_FlightMasters();
     new npc_temucraft_challenge_keeper();

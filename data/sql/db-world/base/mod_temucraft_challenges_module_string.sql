@@ -16,4 +16,9 @@ INSERT INTO `module_string` (`module`, `id`, `string`) VALUES
 ('mod-temucraft-challenges', 13, '{} may live again.'),
 ('mod-temucraft-challenges', 14, 'Take the {} challenge.'),
 ('mod-temucraft-challenges', 15, '{}\n\n{}\n\nThis can''t be undone.'),
-('mod-temucraft-challenges', 16, 'Challenges can only be taken at level {}, before gaining any experience.');
+('mod-temucraft-challenges', 16, 'Challenges can only be taken at level {}, before gaining any experience.'),
+('mod-temucraft-challenges', 17, 'Your challenge forbids hearthstones, teleports, portals and summons.'),
+('mod-temucraft-challenges', 18, 'Explorer''s Contract: you travel on foot until the maximum level.'),
+('mod-temucraft-challenges', 19, 'Self-Found characters don''t trade with other players.'),
+('mod-temucraft-challenges', 20, 'Self-Found characters don''t send or receive mail from other players.'),
+('mod-temucraft-challenges', 21, 'Self-Found characters can''t use the auction house.');

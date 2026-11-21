@@ -60,3 +60,38 @@ Temucraft.Challenges.SlowAndSteady.DeathLoss = 0.05
 #        Default:     1.2
 
 Temucraft.Challenges.WarMode.Rate = 1.2
+
+#
+#    Temucraft.Challenges.AuraFirst
+#        Description: Spell of the first challenge aura; challenge number N uses this id + N (Self-Found is 95417).
+#        Default:     95410
+
+Temucraft.Challenges.AuraFirst = 95410
+
+#
+#    Temucraft.Challenges.SelfFound.Enable
+#        Description: Offer the Self-Found challenge (.challenge join selffound). Characters who already have it keep it.
+#        Default:     1
+
+Temucraft.Challenges.SelfFound.Enable = 1
+
+#
+#    Temucraft.Challenges.SelfFound.NoTrade
+#        Description: Self-Found characters can't trade with other players.
+#        Default:     1
+
+Temucraft.Challenges.SelfFound.NoTrade = 1
+
+#
+#    Temucraft.Challenges.SelfFound.NoMail
+#        Description: Self-Found characters can't send mail to, or get mail from, other players.
+#        Default:     1
+
+Temucraft.Challenges.SelfFound.NoMail = 1
+
+#
+#    Temucraft.Challenges.SelfFound.NoAuction
+#        Description: Self-Found characters can't open the auction house or bid.
+#        Default:     1
+
+Temucraft.Challenges.SelfFound.NoAuction = 1

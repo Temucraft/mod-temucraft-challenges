@@ -12,6 +12,7 @@ combined. Each shows as an aura on the character.
 | Vagrant's Endeavor | `vagrant` | Only poor and common equipment, and no enchantments, until the maximum level. |
 | Boaring Adventure | `boaring` | Experience only from killing boars (no quest or exploration experience). |
 | Explorer's Contract | `explorer` | On foot until the maximum level: flight masters won't fly you, and no hearthstones, teleports, portals or summons. |
+| Self-Found | `selffound` | Everything comes from your own play: no trading with other players, no mail to or from other players, and the auction house won't open. Vendors, quests and drops are fine. Each rule can be turned off in the config (`Temucraft.Challenges.SelfFound.*`). |
 
 Hardcore characters also carry a Tarnished Soul: no hearthstones, teleports, portals or summons
 (`Temucraft.Challenges.Hardcore.NoTeleports`).
@@ -41,7 +42,7 @@ The rules follow a 1.12 server's challenges; the code is new and written for Aze
 
 | Database | Table | IDs |
 |---|---|---|
-| world | `spell_dbc` | 95410-95416 (challenge auras; also in the client Spell.dbc) |
+| world | `spell_dbc` | 95410-95417 (challenge auras; also in the client Spell.dbc; 95417 Self-Found is new and still has to be added to the client Spell.dbc) |
 | world | `mod_temucraft_challenges_reward` | |
 | characters | `mod_temucraft_challenges` | one row per character with a challenge |
 
