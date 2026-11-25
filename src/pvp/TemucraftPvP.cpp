@@ -27,6 +27,7 @@
 #include "World.h"
 #include "WorldConfig.h"
 #include <map>
+#include <mutex>
 #include <unordered_map>
 
 namespace
@@ -51,6 +52,9 @@ namespace
     } cfg;
 
     // killer -> victim -> when
+    // killer -> victim -> time of the last kill that gave experience. Written from PvP kills on battleground and
+    // world map threads at once: only under recentKillsLock.
+    std::mutex recentKillsLock;
     std::unordered_map<uint32, std::unordered_map<uint32, uint32>> recentKills;
 
     void LoadSettings()
@@ -144,10 +148,13 @@ public:
         if (killed->GetLevel() <= Acore::XP::GetGrayLevel(killer->GetLevel()))
             return;
         uint32 const now = uint32(GameTime::GetGameTime().count());
-        uint32& last = recentKills[killer->GetGUID().GetCounter()][killed->GetGUID().GetCounter()];
-        if (last && now - last < cfg.sameVictimSeconds)
-            return;
-        last = now;
+        {
+            std::lock_guard<std::mutex> guard(recentKillsLock);
+            uint32& last = recentKills[killer->GetGUID().GetCounter()][killed->GetGUID().GetCounter()];
+            if (last && now - last < cfg.sameVictimSeconds)
+                return;
+            last = now;
+        }
         if (uint32 xp = LevelShare(killer, cfg.killPct))
         {
             killer->GiveXP(xp, nullptr);
@@ -155,7 +162,12 @@ public:
         }
     }
 
-    void OnPlayerLogout(Player* p) override { recentKills.erase(p->GetGUID().GetCounter()); }
+    void OnPlayerLogout(Player* p) override
+    {
+        std::lock_guard<std::mutex> guard(recentKillsLock);
+        recentKills.erase(p->GetGUID().GetCounter());
+    }
+
 };
 
 class TemucraftPvP_Battlegrounds : public AllBattlegroundScript
